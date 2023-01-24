@@ -1,5 +1,6 @@
 const { Sequelize } = require('sequelize')
 const { DATABASE_URL, DATABASE_SSL } = require('../utils/config')
+const { Umzug, SequelizeStorage } = require('umzug')
 
 const sequelize = new Sequelize(DATABASE_URL, {
     dialectOptions: {
@@ -10,9 +11,33 @@ const sequelize = new Sequelize(DATABASE_URL, {
     }
 })
 
+const migrationConfig = {
+    migrations: {
+        glob: 'migrations/*.js'
+    },
+    storage: new SequelizeStorage({ sequelize, tableName: 'migrations' }),
+    context: sequelize.getQueryInterface(),
+    logger: console
+}
+
+const runMigrations = async () => {
+    const migrator = new Umzug(migrationConfig)
+    const migrations = await migrator.up()
+    console.log('Migrations are up to date', {
+        files: migrations.map((migration) => migration.name)
+    })
+}
+
+const rollbackMigration = async () => {
+    await sequelize.authenticate()
+    const migrator = new Umzug(migrationConfig)
+    await migrator.down()
+}
+
 const connectToDatabase = async () => {
     try {
         await sequelize.authenticate()
+        await runMigrations()
         console.log('Connected to database')
     } catch(error) {
         console.log('Failed to connect to database', error)
@@ -22,5 +47,5 @@ const connectToDatabase = async () => {
 }
 
 module.exports = {
-    connectToDatabase, sequelize
+    connectToDatabase, sequelize, rollbackMigration
 }
