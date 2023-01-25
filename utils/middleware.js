@@ -1,3 +1,5 @@
+const { User } = require('../models')
+
 const tokenExtractor = (req, res, next) => {
     const auth = req.get('Authorization')
 
@@ -10,6 +12,15 @@ const tokenExtractor = (req, res, next) => {
     next()
 }
 
+const userExtractor = async (req, res, next) => {
+    const user = await User.findByPk(req.user.id)
+    if(!user) {
+        return res.status(401).end()
+    }
+    req.savedUser = user
+    next()
+}
+
 module.exports = {
-    tokenExtractor
+    tokenExtractor, userExtractor
 }
