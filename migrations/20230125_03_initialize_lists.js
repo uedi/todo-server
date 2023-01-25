@@ -12,11 +12,11 @@ module.exports = {
                 type: DataTypes.STRING,
                 allowNull: false
             },
-            owner: {
+            user_id: {
                 type: DataTypes.UUID,
                 references: { model: 'users', key: 'id' }
             },
-            group: {
+            group_id: {
                 type: DataTypes.UUID,
                 references: { model: 'groups', key: 'id' }
             },
