@@ -5,6 +5,7 @@ const signupRouter = require('./controllers/signup')
 const loginRouter = require('./controllers/login')
 const groupsRouter = require('./controllers/groups')
 const listsRouter = require('./controllers/lists')
+const todoRouter = require('./controllers/todos')
 
 app.use(express.json())
 
@@ -15,6 +16,7 @@ app.use(middleware.tokenExtractor)
 
 app.use('/api/groups', groupsRouter)
 app.use('/api/lists', listsRouter)
+app.use('/api/todos', todoRouter)
 
 app.get('/', (req, res) => {
     res.send('/')
