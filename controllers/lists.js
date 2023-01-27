@@ -1,10 +1,14 @@
 const listRouter = require('express').Router()
 const auth = require('../utils/auth')
-const { List } = require('../models')
+const { List, Todo } = require('../models')
 const { userExtractor } = require('../utils/middleware')
 
 listRouter.get('/', auth, userExtractor, async (req, res) => {
-    const ownedLists = await List.findAll({ owner: req.savedUser.id })
+    const ownedLists = await List.findAll({ owner: req.savedUser.id,
+        include: {
+            model: Todo
+        }
+    })
     return res.status(200).json(ownedLists)
 })
 

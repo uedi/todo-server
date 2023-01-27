@@ -19,5 +19,5 @@ Todo.belongsTo(List)
 List.hasMany(Todo)
 
 module.exports = {
-    User, Group, List
+    User, Group, List, Todo
 }
