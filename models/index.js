@@ -2,9 +2,13 @@ const User = require('./user')
 const Group = require('./group')
 const List = require('./list')
 const Todo = require('./todo')
+const Contact = require('./contact')
 
 User.hasMany(Group, { foreignKey: 'owner' })
 Group.belongsTo(User, { foreignKey: 'owner' })
+
+User.hasMany(Contact, { foreignKey: 'user_id' })
+Contact.belongsTo(User, { foreignKey: 'user_id' })
 
 List.belongsTo(Group)
 Group.hasMany(List)
@@ -19,5 +23,5 @@ Todo.belongsTo(List)
 List.hasMany(Todo)
 
 module.exports = {
-    User, Group, List, Todo
+    User, Group, List, Todo, Contact
 }
