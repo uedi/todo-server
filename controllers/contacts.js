@@ -4,7 +4,11 @@ const { Contact, User } = require('../models')
 const { userExtractor } = require('../utils/middleware')
 
 contactRouter.get('/', auth, userExtractor, async (req, res) => {
-    const contacts = await Contact.findAll({ user_id: req.savedUser.id})
+    const contacts = await Contact.findAll({
+        where: {
+            userId: req.savedUser.id
+        }
+    })
     return res.status(200).json(contacts)
 })
 

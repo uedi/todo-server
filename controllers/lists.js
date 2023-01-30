@@ -4,7 +4,10 @@ const { List, Todo } = require('../models')
 const { userExtractor } = require('../utils/middleware')
 
 listRouter.get('/', auth, userExtractor, async (req, res) => {
-    const ownedLists = await List.findAll({ owner: req.savedUser.id,
+    const ownedLists = await List.findAll({
+        where: {
+            userId: req.savedUser.id
+        },
         include: {
             model: Todo
         }

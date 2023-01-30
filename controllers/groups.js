@@ -4,12 +4,15 @@ const { Group, Todo } = require('../models')
 const { userExtractor } = require('../utils/middleware')
 
 groupRouter.get('/', auth, userExtractor, async (req, res) => {
-    const groups = await Group.findAll({ owner: req.savedUser.id,
+    const groups = await Group.findAll({
+        where: {
+            owner: req.savedUser.id
+        },
         include: {
             model: Todo
         }
     })
-    
+
     return res.status(200).json(groups)
 })
 
