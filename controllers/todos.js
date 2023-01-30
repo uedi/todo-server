@@ -28,4 +28,27 @@ todoRouter.post('/', auth, userExtractor, async (req, res) => {
     return res.status(201).json(newTodo)
 })
 
+todoRouter.put('/', auth, userExtractor, async (req, res) => {
+    const body = req.body
+    console.log(body)
+
+    if(!body.id) {
+        return res.status(400).end()
+    }
+
+    const todoToUpdate = await Todo.findByPk(body.id)
+
+    if(!todoToUpdate) {
+        return res.status(400).end()
+    }
+
+    // todo check access
+
+    todoToUpdate.done = body.done
+
+    await todoToUpdate.save()
+    const savedTodo = await Todo.findByPk(body.id)
+    return res.status(200).json(savedTodo)
+})
+
 module.exports = todoRouter
