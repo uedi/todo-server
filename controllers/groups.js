@@ -1,6 +1,6 @@
 const groupRouter = require('express').Router()
 const auth = require('../utils/auth')
-const { Group, Todo } = require('../models')
+const { Group, Todo, User } = require('../models')
 const { userExtractor } = require('../utils/middleware')
 
 groupRouter.get('/', auth, userExtractor, async (req, res) => {
@@ -8,9 +8,7 @@ groupRouter.get('/', auth, userExtractor, async (req, res) => {
         where: {
             owner: req.savedUser.id
         },
-        include: {
-            model: Todo
-        }
+        include: ['todos', 'users']
     })
 
     return res.status(200).json(groups)
