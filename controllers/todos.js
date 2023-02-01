@@ -30,7 +30,6 @@ todoRouter.post('/', auth, userExtractor, async (req, res) => {
 
 todoRouter.put('/', auth, userExtractor, async (req, res) => {
     const body = req.body
-    console.log(body)
 
     if(!body.id) {
         return res.status(400).end()

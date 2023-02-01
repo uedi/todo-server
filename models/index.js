@@ -27,5 +27,5 @@ User.belongsToMany(Group, { through: Membership, as: 'groups' })
 Group.belongsToMany(User, { through: Membership, as: 'users' })
 
 module.exports = {
-    User, Group, List, Todo, Contact
+    User, Group, List, Todo, Contact, Membership
 }
