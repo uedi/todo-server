@@ -6,7 +6,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:migrations": "cross-env NODE_ENV=test node utils/migrations.js",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
     "migration:down": "node utils/rollback.js"
   },
   "author": "",
@@ -22,6 +23,11 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "nodemon": "^2.0.20"
+    "jest": "^29.4.1",
+    "nodemon": "^2.0.20",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

@@ -47,5 +47,5 @@ const connectToDatabase = async () => {
 }
 
 module.exports = {
-    connectToDatabase, sequelize, rollbackMigration
+    connectToDatabase, sequelize, rollbackMigration, runMigrations
 }
