@@ -33,7 +33,14 @@ groupRouter.post('/', auth, userExtractor, async (req, res) => {
         owner: true
     })
 
-    return res.status(201).json(newGroup)
+    const createdGroup = await Group.findByPk(newGroup.id, {
+        include: {
+            model: User, as: 'users',
+            attributes: ['name', 'username', 'id']
+        }
+    })
+
+    return res.status(201).json(createdGroup)
 })
 
 groupRouter.post('/:id/members', auth, userExtractor, async (req, res) => {
