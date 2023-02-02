@@ -1,6 +1,6 @@
 const todoRouter = require('express').Router()
 const auth = require('../utils/auth')
-const { Todo, List, Group } = require('../models')
+const { Todo, List, Membership } = require('../models')
 const { userExtractor } = require('../utils/middleware')
 
 todoRouter.post('/', auth, userExtractor, async (req, res) => {
@@ -11,7 +11,12 @@ todoRouter.post('/', auth, userExtractor, async (req, res) => {
     }
 
     const accessToList = (await List.findByPk(body.listId))?.userId === req.savedUser.id
-    const accessToGroup = (await Group.findByPk(body.groupId))?.owner === req.savedUser.id
+    const accessToGroup = await Membership.findOne({
+        where: {
+            groupId: body.groupId,
+            userId: req.savedUser.id
+        }
+    })
 
     if(!accessToList && !accessToGroup) {
         return res.status(401).json({ error: 'No access' })
