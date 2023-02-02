@@ -6,7 +6,11 @@ const { userExtractor } = require('../utils/middleware')
 groupRouter.get('/', auth, userExtractor, async (req, res) => {
     const user = await User.findByPk(req.savedUser.id, {
         include: {
-            model: Group, as: 'groups'
+            model: Group, as: 'groups',
+            include: {
+                model: User, as: 'users',
+                attributes: ['name', 'username', 'id']
+            }
         },
         attributes: ['username']
     })
