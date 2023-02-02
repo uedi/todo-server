@@ -4,14 +4,13 @@ const { Group, Membership, User } = require('../models')
 const { userExtractor } = require('../utils/middleware')
 
 groupRouter.get('/', auth, userExtractor, async (req, res) => {
-    const groups = await Group.findAll({
-        where: {
-            owner: req.savedUser.id
+    const user = await User.findByPk(req.savedUser.id, {
+        include: {
+            model: Group, as: 'groups'
         },
-        include: ['todos', 'users']
+        attributes: ['username']
     })
-
-    return res.status(200).json(groups)
+    return res.status(200).json(user?.groups || [])
 })
 
 groupRouter.post('/', auth, userExtractor, async (req, res) => {
@@ -22,8 +21,12 @@ groupRouter.post('/', auth, userExtractor, async (req, res) => {
     }
 
     const newGroup = await Group.create({
-        name: body.name,
-        owner: req.savedUser.id
+        name: body.name
+    })
+    await Membership.create({
+        groupId: newGroup.id,
+        userId: req.savedUser.id,
+        owner: true
     })
 
     return res.status(201).json(newGroup)
