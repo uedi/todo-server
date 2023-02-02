@@ -15,6 +15,10 @@ Membership.init({
         allowNull: false,
         references: { model: 'users', key: 'id' },
         primaryKey: true
+    },
+    owner: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 }, {
     sequelize,
