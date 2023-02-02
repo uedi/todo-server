@@ -7,6 +7,9 @@ contactRouter.get('/', auth, userExtractor, async (req, res) => {
     const contacts = await Contact.findAll({
         where: {
             userId: req.savedUser.id
+        },
+        attributes: {
+            exclude: ['userId', 'user_id']
         }
     })
     return res.status(200).json(contacts)
