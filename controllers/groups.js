@@ -57,6 +57,15 @@ groupRouter.post('/:id/members', auth, userExtractor, async (req, res) => {
         return res.status(400).end()
     }
 
+    const isMember = await Membership.findOne({ where: {
+        groupId: group.id,
+        userId: user.id
+    }})
+
+    if(isMember) {
+       return res.status(400).json({ error: 'User is already member '})
+    }
+
     // todo only owner can make changes
     await Membership.create(({
         groupId: group.id,
