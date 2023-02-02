@@ -43,23 +43,27 @@ groupRouter.post('/:id/members', auth, userExtractor, async (req, res) => {
         return res.status(400).end()
     }
 
-    const group = await Group.findByPk(req.params.id)
-    const user = await User.findByPk(body.contactId)
+    const group = await Group.findByPk(req.params.id, { attributes: ['id'] })
+    const user = await User.findByPk(body.contactId, { attributes: ['id'] })
 
     if(!group || !user) {
         return res.status(400).end()
     }
 
-    // todo check access
-
+    // todo only owner can make changes
     await Membership.create(({
         groupId: group.id,
         userId: user.id
     }))
 
-    // todo return users
+    const updatedGroup = await Group.findByPk(group.id, {
+        include: {
+            model: User, as: 'users',
+            attributes: ['name', 'username', 'id']
+        }
+    })
 
-    return res.status(201).end()
+    return res.status(201).json(updatedGroup?.users || [])
 })
 
 module.exports = groupRouter
