@@ -1,5 +1,5 @@
 const { Sequelize } = require('sequelize')
-const { DATABASE_URL, DATABASE_SSL } = require('../utils/config')
+const { DATABASE_URL, DATABASE_SSL, SEQUELIZE_LOGGING } = require('../utils/config')
 const { Umzug, SequelizeStorage } = require('umzug')
 
 const sequelize = new Sequelize(DATABASE_URL, {
@@ -8,7 +8,8 @@ const sequelize = new Sequelize(DATABASE_URL, {
             require: true,
             rejectUnauthorized: false
         } : null
-    }
+    },
+    logging: SEQUELIZE_LOGGING
 })
 
 const migrationConfig = {
