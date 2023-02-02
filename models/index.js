@@ -5,9 +5,6 @@ const Todo = require('./todo')
 const Contact = require('./contact')
 const Membership = require('./membership')
 
-//User.hasMany(Group, { foreignKey: 'owner' })
-Group.belongsTo(User, { foreignKey: 'owner' })
-
 User.hasMany(Contact, { foreignKey: 'user_id' })
 Contact.belongsTo(User, { foreignKey: 'user_id' })
 
