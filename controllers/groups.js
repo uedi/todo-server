@@ -1,7 +1,8 @@
 const groupRouter = require('express').Router()
 const auth = require('../utils/auth')
-const { Group, Membership, User } = require('../models')
+const { Group, Membership, User, Message } = require('../models')
 const { userExtractor } = require('../utils/middleware')
+const { isGroupMember } = require('./helpers')
 
 groupRouter.get('/', auth, userExtractor, async (req, res) => {
     const user = await User.findByPk(req.savedUser.id, {
@@ -80,6 +81,35 @@ groupRouter.post('/:id/members', auth, userExtractor, async (req, res) => {
     })
 
     return res.status(201).json(updatedGroup?.users || [])
+})
+
+groupRouter.get('/:id/messages', auth, userExtractor, async (req, res) => {
+    const group = await Group.findByPk(req.params.id, { attributes: ['id'] })
+
+    if(!group) {
+        return res.status(400).end()
+    }
+
+    const accessToGroup = await isGroupMember(group.id, req.savedUser.id)
+
+    if(!accessToGroup) {
+        return res.status(403).json()
+    }
+
+    const messages = await Message.findAll({
+        where: {
+            groupId: group.id
+        },
+        attributes: {
+            exclude: ['userId']
+        },
+        include: {
+            model: User,
+            attributes: ['name', 'username', 'id']
+        }
+    })
+
+    return res.status(200).json(messages)
 })
 
 module.exports = groupRouter

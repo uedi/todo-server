@@ -2,6 +2,7 @@ const messageRouter = require('express').Router()
 const auth = require('../utils/auth')
 const { Message, Group, User } = require('../models')
 const { userExtractor } = require('../utils/middleware')
+const { isGroupMember } = require('./helpers')
 
 messageRouter.post('/', auth, userExtractor, async (req, res) => {
     const body = req.body
@@ -14,6 +15,12 @@ messageRouter.post('/', auth, userExtractor, async (req, res) => {
 
     if(!group) {
         return res.status(400).end()
+    }
+
+    const accessToGroup = await isGroupMember(group.id, req.savedUser.id)
+
+    if(!accessToGroup) {
+        return res.status(403).end()
     }
 
     const message = await Message.create({
