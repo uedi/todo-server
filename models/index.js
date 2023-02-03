@@ -27,6 +27,8 @@ Group.belongsToMany(User, { through: Membership, as: 'users' })
 Message.belongsTo(Group)
 Group.hasMany(Message)
 
+Message.belongsTo(User)
+
 module.exports = {
     User, Group, List, Todo, Contact, Membership, Message
 }
