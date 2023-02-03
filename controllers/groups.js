@@ -1,6 +1,6 @@
 const groupRouter = require('express').Router()
 const auth = require('../utils/auth')
-const { Group, Membership, User, Message } = require('../models')
+const { Group, Membership, User, Message, Todo } = require('../models')
 const { userExtractor } = require('../utils/middleware')
 const { isGroupMember } = require('./helpers')
 
@@ -8,10 +8,12 @@ groupRouter.get('/', auth, userExtractor, async (req, res) => {
     const user = await User.findByPk(req.savedUser.id, {
         include: {
             model: Group, as: 'groups',
-            include: {
+            include: [{
                 model: User, as: 'users',
                 attributes: ['name', 'username', 'id']
-            }
+            }, {
+                model: Todo
+            }]
         },
         attributes: ['username']
     })
