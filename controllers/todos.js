@@ -56,4 +56,29 @@ todoRouter.put('/', auth, userExtractor, async (req, res) => {
     return res.status(200).json(savedTodo)
 })
 
+todoRouter.delete('/:id', auth, userExtractor, async (req, res) => {
+    const id = req.params?.id
+
+    if(!id) {
+        return res.status(400).end()
+    }
+
+    const todo = await Todo.findByPk(id)
+
+    if(!todo) {
+        return res.status(404).end()
+    }
+
+    const accessToGroup = await isGroupMember(todo.groupId, req.savedUser.id)
+    const accessToList = (await List.findByPk(todo.listId))?.userId === req.savedUser.id
+
+    if(!accessToGroup && !accessToList) {
+        return res.status(400).end()
+    }
+
+    await todo.destroy()
+
+    return res.status(200).end()
+})
+
 module.exports = todoRouter
