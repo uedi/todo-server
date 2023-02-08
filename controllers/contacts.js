@@ -18,19 +18,25 @@ contactRouter.get('/', auth, userExtractor, async (req, res) => {
 contactRouter.post('/', auth, userExtractor, async (req, res) => {
     const body = req.body
 
-    if(!body?.username) {
+    if(!(body?.username || body?.id)) {
         return res.status(400).end()
     }
 
-    const contactUser = await User.findOne({
-        where: {
-            username: body.username
-        }
-    })
+    let contactUser = null
+
+    if(body.username) {
+        contactUser = await User.findOne({
+            where: {
+                username: body.username
+            }
+        })
+    } else if(body.id) {
+        contactUser = await User.findByPk(body.id)
+    }
 
     if(!contactUser) {
         const error = {
-            message: 'Unknown username'
+            message: 'Unknown user'
         }
         return res.status(400).json({ error })
     }
