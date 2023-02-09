@@ -50,6 +50,9 @@ todoRouter.put('/', auth, userExtractor, async (req, res) => {
     }
 
     todoToUpdate.done = body.done
+    todoToUpdate.name = body.name || todoToUpdate.name
+    todoToUpdate.start = body.start || todoToUpdate.start
+    todoToUpdate.end = body.end || todoToUpdate.end
 
     await todoToUpdate.save()
     const savedTodo = await Todo.findByPk(body.id)
