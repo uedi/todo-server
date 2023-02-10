@@ -1,6 +1,6 @@
 const todoRouter = require('express').Router()
 const auth = require('../utils/auth')
-const { Todo, List } = require('../models')
+const { Todo } = require('../models')
 const { userExtractor } = require('../utils/middleware')
 const { isGroupMember, hasListAccess } = require('./helpers')
 
