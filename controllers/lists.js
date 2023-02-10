@@ -60,4 +60,25 @@ listRouter.put('/:id', auth, userExtractor, async (req, res) => {
     return res.status(200).json(savedList)
 })
 
+listRouter.delete('/:id', auth, userExtractor, async (req, res) => {
+    const listId = req.params.id
+    const list = await List.findByPk(listId)
+    const accessToList = await hasListAccess(list?.id, req.savedUser.id)
+
+    if(!list || !accessToList) {
+        return res.status(400).end()
+    }
+
+    await Todo.destroy({
+        where: {
+            listId: listId
+        }
+    })
+
+    await list.destroy()
+
+    return res.status(200).end()
+})
+
+
 module.exports = listRouter
