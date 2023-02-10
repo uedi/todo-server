@@ -23,11 +23,17 @@ listRouter.post('/', auth, userExtractor, async (req, res) => {
         return res.status(400).end()
     }
 
-    const newList = await List.create({
+    const listToCreate = {
         name: body.name,
         userId: body.groupId ? null : req.savedUser.id,
         groupId: body.groupId
-    })
+    }
+
+    if(body.color) {
+        listToCreate.color = body.color
+    }
+
+    const newList = await List.create(listToCreate)
 
     return res.status(201).json(newList)
 })
