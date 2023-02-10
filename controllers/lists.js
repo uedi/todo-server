@@ -55,6 +55,10 @@ listRouter.put('/:id', auth, userExtractor, async (req, res) => {
 
     list.name = body.name
 
+    if(body.color) {
+        list.color = body.color
+    }
+
     await list.save()
 
     const savedList = await List.findByPk(list.id, {
