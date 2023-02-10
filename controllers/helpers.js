@@ -14,6 +14,22 @@ const isGroupMember = async (groupId, userId) => {
     return accessToGroup ? true : false
 }
 
+const isGroupOwner = async (groupId, userId) => {
+    if(!groupId || !userId) {
+        return false
+    }
+
+    const ownerAccess = await Membership.findOne({
+        where: {
+            groupId: groupId,
+            userId: userId,
+            owner: true
+        }
+    })
+
+    return ownerAccess ? true : false
+}
+
 const hasListAccess = async (listId, userId) => {
     if(!listId || !userId) {
         return false
@@ -24,5 +40,5 @@ const hasListAccess = async (listId, userId) => {
 }
 
 module.exports = {
-    isGroupMember, hasListAccess
+    isGroupMember, hasListAccess, isGroupOwner
 }

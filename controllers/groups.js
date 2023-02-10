@@ -2,7 +2,8 @@ const groupRouter = require('express').Router()
 const auth = require('../utils/auth')
 const { Group, Membership, User, Message, Todo } = require('../models')
 const { userExtractor } = require('../utils/middleware')
-const { isGroupMember } = require('./helpers')
+const { isGroupMember, isGroupOwner } = require('./helpers')
+const { where } = require('sequelize')
 
 groupRouter.get('/', auth, userExtractor, async (req, res) => {
     const user = await User.findByPk(req.savedUser.id, {
@@ -112,6 +113,36 @@ groupRouter.get('/:id/messages', auth, userExtractor, async (req, res) => {
     })
 
     return res.status(200).json(messages)
+})
+
+groupRouter.put('/:id', auth, userExtractor, async (req, res) => {
+    const body = req.body
+    const groupId = req.params.id
+    const group = await Group.findByPk(groupId)
+
+    if(!body?.name || !group || !body.name === '') {
+        return res.status(400).end()
+    }
+
+    const accessToGroup = await isGroupOwner(group.id, req.savedUser.id)
+
+    if(!accessToGroup) {
+        return res.status(403).end()
+    }
+
+    group.name = body.name
+    await group.save()
+
+    const savedGroup = await Group.findByPk(group.id, {
+        include: [{
+            model: User, as: 'users',
+            attributes: ['name', 'username', 'id']
+        }, {
+            model: Todo
+        }]
+    })
+
+    return res.status(200).json(savedGroup)
 })
 
 module.exports = groupRouter
