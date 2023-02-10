@@ -2,7 +2,7 @@ const todoRouter = require('express').Router()
 const auth = require('../utils/auth')
 const { Todo, List } = require('../models')
 const { userExtractor } = require('../utils/middleware')
-const { isGroupMember } = require('./helpers')
+const { isGroupMember, hasListAccess } = require('./helpers')
 
 todoRouter.post('/', auth, userExtractor, async (req, res) => {
     const body = req.body
@@ -11,7 +11,7 @@ todoRouter.post('/', auth, userExtractor, async (req, res) => {
         return res.status(400).end()
     }
 
-    const accessToList = (await List.findByPk(body.listId))?.userId === req.savedUser.id
+    const accessToList = await hasListAccess(body.listId, req.savedUser.id)
     const accessToGroup = await isGroupMember(body.groupId, req.savedUser.id)
 
     if(!accessToList && !accessToGroup) {
@@ -43,7 +43,7 @@ todoRouter.put('/', auth, userExtractor, async (req, res) => {
     }
 
     const accessToGroup = await isGroupMember(todoToUpdate.groupId, req.savedUser.id)
-    const accessToList = (await List.findByPk(todoToUpdate.listId))?.userId === req.savedUser.id
+    const accessToList = await hasListAccess(todoToUpdate.listId, req.savedUser.id)
 
     if(!accessToGroup && !accessToList) {
         return res.status(400).end()
@@ -73,7 +73,7 @@ todoRouter.delete('/:id', auth, userExtractor, async (req, res) => {
     }
 
     const accessToGroup = await isGroupMember(todo.groupId, req.savedUser.id)
-    const accessToList = (await List.findByPk(todo.listId))?.userId === req.savedUser.id
+    const accessToList = await hasListAccess(todo.listId, req.savedUser.id)
 
     if(!accessToGroup && !accessToList) {
         return res.status(400).end()

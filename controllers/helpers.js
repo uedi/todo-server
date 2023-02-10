@@ -1,4 +1,4 @@
-const { Membership } = require('../models')
+const { Membership, List } = require('../models')
 
 const isGroupMember = async (groupId, userId) => {
     if(!groupId || !userId) {
@@ -14,6 +14,15 @@ const isGroupMember = async (groupId, userId) => {
     return accessToGroup ? true : false
 }
 
+const hasListAccess = async (listId, userId) => {
+    if(!listId || !userId) {
+        return false
+    }
+
+    const accessToList = (await List.findByPk(listId))?.userId === userId
+    return accessToList ? true : false
+}
+
 module.exports = {
-    isGroupMember
+    isGroupMember, hasListAccess
 }
