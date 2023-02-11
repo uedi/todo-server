@@ -8,10 +8,7 @@ loginRouter.post('/', async (req, res) => {
     const body = req.body
 
     if(!body.username || !body.password) {
-        const error = {
-            message: 'Missing username and/or password'
-        }
-        return res.status(400).json({ error })
+        return res.status(400).json({ error: 'Missing username and/or password' })
     }
 
     const user = await User.findOne({
@@ -25,10 +22,7 @@ loginRouter.post('/', async (req, res) => {
     : await bcrypt.compare(body.password, user.passwordHash)
 
     if(!passwordCorrect) {
-        const error = {
-            message: 'Invalid credentials'
-        }
-        return res.status(401).json({ error })
+        return res.status(401).json({ error: 'Invalid credentials' })
     }
 
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.TOKEN_DATA)
