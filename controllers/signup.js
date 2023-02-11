@@ -8,10 +8,7 @@ signupRouter.post('/', async (req, res) => {
     const body = req.body
 
     if(!body.username || !body.password || !body.name) {
-        const error = {
-            message: 'Missing username, password or name'
-        }
-        return res.status(400).json({ error })
+        return res.status(400).json({ error: 'Missing username, password or name' })
     }
 
     const usernameReserved = await User.findOne({
@@ -21,10 +18,7 @@ signupRouter.post('/', async (req, res) => {
     })
 
     if(usernameReserved) {
-        const error = {
-            message: 'Username is reserved'
-        }
-        return res.status(400).json({ error })
+        return res.status(400).json({ error: 'Username is reserved' })
     }
 
     const saltrounds = 10
