@@ -35,10 +35,7 @@ contactRouter.post('/', auth, userExtractor, async (req, res) => {
     }
 
     if(!contactUser) {
-        const error = {
-            message: 'Unknown user'
-        }
-        return res.status(400).json({ error })
+        return res.status(400).json({ error: 'Unknown user' })
     }
 
     const contact = await Contact.create({

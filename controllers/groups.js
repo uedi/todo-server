@@ -3,7 +3,6 @@ const auth = require('../utils/auth')
 const { Group, Membership, User, Message, Todo } = require('../models')
 const { userExtractor } = require('../utils/middleware')
 const { isGroupMember, isGroupOwner } = require('./helpers')
-const { where } = require('sequelize')
 
 groupRouter.get('/', auth, userExtractor, async (req, res) => {
     const user = await User.findByPk(req.savedUser.id, {
