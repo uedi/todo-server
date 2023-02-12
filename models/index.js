@@ -24,6 +24,8 @@ List.hasMany(Todo)
 User.belongsToMany(Group, { through: Membership, as: 'groups' })
 Group.belongsToMany(User, { through: Membership, as: 'users' })
 
+Membership.belongsTo( Group, { foreignKey: 'groupId' })
+
 Message.belongsTo(Group)
 Group.hasMany(Message)
 

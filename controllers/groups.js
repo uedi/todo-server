@@ -72,7 +72,8 @@ groupRouter.post('/:id/members', auth, userExtractor, async (req, res) => {
     // todo only owner can make changes
     await Membership.create(({
         groupId: group.id,
-        userId: user.id
+        userId: user.id,
+        pending: true
     }))
 
     const updatedGroup = await Group.findByPk(group.id, {

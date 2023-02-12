@@ -9,6 +9,7 @@ const listsRouter = require('./controllers/lists')
 const todoRouter = require('./controllers/todos')
 const contactsRouter = require('./controllers/contacts')
 const messagesRouter = require('./controllers/messages')
+const requestsRouter = require('./controllers/requests')
 
 app.use(express.json())
 
@@ -22,6 +23,7 @@ app.use('/api/lists', listsRouter)
 app.use('/api/todos', todoRouter)
 app.use('/api/contacts', contactsRouter)
 app.use('/api/messages', messagesRouter)
+app.use('/api/requests', requestsRouter)
 
 app.get('/', (req, res) => {
     res.send('/')
