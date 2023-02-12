@@ -19,6 +19,10 @@ Membership.init({
     owner: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+    },
+    pending: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 }, {
     sequelize,
