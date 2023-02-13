@@ -62,12 +62,16 @@ requestsRouter.post('/membership', auth, userExtractor, async (req, res) => {
         }
     })
 
-    const group = await Group.findByPk(body.groupId, {
-        include: {
-            model: User, as: 'users',
-            attributes: ['name', 'username', 'id']
-        }
-    })
+    let group = null
+
+    if(!body.reject) {
+        group = await Group.findByPk(body.groupId, {
+            include: {
+                model: User, as: 'users',
+                attributes: ['name', 'username', 'id']
+            }
+        })
+    }
 
     return res.status(200).json({ memberships: memberships, group: group })
 })
