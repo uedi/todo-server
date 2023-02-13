@@ -17,7 +17,9 @@ groupRouter.get('/', auth, userExtractor, async (req, res) => {
         },
         attributes: ['username']
     })
-    return res.status(200).json(user?.groups || [])
+    const groups = user?.groups || []
+    const groupsToSend = groups.filter(g => !g.membership.pending)
+    return res.status(200).json(groupsToSend)
 })
 
 groupRouter.post('/', auth, userExtractor, async (req, res) => {
