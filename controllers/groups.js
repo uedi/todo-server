@@ -147,4 +147,30 @@ groupRouter.put('/:id', auth, userExtractor, async (req, res) => {
     return res.status(200).json(savedGroup)
 })
 
+groupRouter.delete('/:id', auth, userExtractor, async (req, res) => {
+    const groupId = req.params.id
+    const group = await Group.findByPk(groupId)
+    const accessToGroup = await isGroupOwner(group.id, req.savedUser.id)
+
+    if(!group || !accessToGroup) {
+        return res.status(403).end()
+    }
+
+    await Todo.destroy({
+        where: {
+            groupId: groupId
+        }
+    })
+
+    await Membership.destroy({
+        where: {
+            groupId: groupId
+        }
+    })
+
+    await group.destroy()
+
+    return res.status(200).end()
+})
+
 module.exports = groupRouter
