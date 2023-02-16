@@ -168,6 +168,30 @@ groupRouter.put('/:id', auth, userExtractor, async (req, res) => {
     return res.status(200).json(groupToSend)
 })
 
+groupRouter.delete('/:id/leave', auth, userExtractor, async (req, res) => {
+    const groupId = req.params.id
+    const group = await Group.findByPk(groupId)
+
+    if(!group) {
+        return res.status(404).end()
+    }
+
+    const isOwner = await isGroupOwner(group.id, req.savedUser.id)
+
+    if(isOwner) {
+        return res.status(403).json({ error: 'Owner cannot leave group' })
+    }
+
+    await Membership.destroy({
+        where: {
+            groupId: group.id,
+            userId: req.savedUser.id
+        }
+    })
+
+    return res.status(200).end()
+})
+
 groupRouter.delete('/:id', auth, userExtractor, async (req, res) => {
     const groupId = req.params.id
     const group = await Group.findByPk(groupId)
