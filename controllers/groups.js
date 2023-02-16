@@ -168,6 +168,11 @@ groupRouter.put('/:id', auth, userExtractor, async (req, res) => {
     }
 
     group.name = body.name
+
+    if(body.color) {
+        group.color = body.color
+    }
+
     await group.save()
 
     const groupToSend = await getGroupResponse(group.id, req.savedUser.id)
