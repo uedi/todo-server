@@ -2,7 +2,7 @@ const groupRouter = require('express').Router()
 const auth = require('../utils/auth')
 const { Group, Membership, User, Message, Todo } = require('../models')
 const { userExtractor } = require('../utils/middleware')
-const { isGroupMember, isGroupOwner } = require('./helpers')
+const { isGroupMember, isGroupOwner, getGroupResponse } = require('./helpers')
 
 groupRouter.get('/', auth, userExtractor, async (req, res) => {
     const user = await User.findByPk(req.savedUser.id, {
@@ -32,20 +32,15 @@ groupRouter.post('/', auth, userExtractor, async (req, res) => {
     const newGroup = await Group.create({
         name: body.name
     })
+
     await Membership.create({
         groupId: newGroup.id,
         userId: req.savedUser.id,
         owner: true
     })
 
-    const createdGroup = await Group.findByPk(newGroup.id, {
-        include: {
-            model: User, as: 'users',
-            attributes: ['name', 'username', 'id']
-        }
-    })
-
-    return res.status(201).json(createdGroup)
+    const groupToSend = await getGroupResponse(newGroup.id, req.savedUser.id)
+    return res.status(201).json(groupToSend)
 })
 
 groupRouter.post('/:id/members', auth, userExtractor, async (req, res) => {
@@ -135,16 +130,8 @@ groupRouter.put('/:id', auth, userExtractor, async (req, res) => {
     group.name = body.name
     await group.save()
 
-    const savedGroup = await Group.findByPk(group.id, {
-        include: [{
-            model: User, as: 'users',
-            attributes: ['name', 'username', 'id']
-        }, {
-            model: Todo
-        }]
-    })
-
-    return res.status(200).json(savedGroup)
+    const groupToSend = await getGroupResponse(group.id, req.savedUser.id)
+    return res.status(200).json(groupToSend)
 })
 
 groupRouter.delete('/:id', auth, userExtractor, async (req, res) => {
