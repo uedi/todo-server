@@ -29,9 +29,15 @@ groupRouter.post('/', auth, userExtractor, async (req, res) => {
         return res.status(400).end()
     }
 
-    const newGroup = await Group.create({
+    const groupToCreate = {
         name: body.name
-    })
+    }
+
+    if(body.color) {
+        groupToCreate.color = body.color
+    }
+
+    const newGroup = await Group.create(groupToCreate)
 
     await Membership.create({
         groupId: newGroup.id,
