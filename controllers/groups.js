@@ -83,6 +83,40 @@ groupRouter.post('/:id/members', auth, userExtractor, async (req, res) => {
     return res.status(201).json(updatedGroup?.users || [])
 })
 
+groupRouter.delete('/:gid/members/:uid', auth, userExtractor, async (req, res) => {
+    const groupId = req.params.gid
+    const userId = req.params.uid
+
+    const group = await Group.findByPk(groupId, { attributes: ['id'] })
+    const user = await User.findByPk(userId, { attributes: ['id'] })
+
+    if(!group || !user) {
+        return res.status(400).end()
+    }
+
+    const accessToGroup = await isGroupOwner(group.id, req.savedUser.id)
+
+    if(!accessToGroup) {
+        return res.status(403).end()
+    }
+
+    await Membership.destroy({
+        where: {
+            groupId: groupId,
+            userId: userId
+        }
+    })
+
+    const updatedGroup = await Group.findByPk(group.id, {
+        include: {
+            model: User, as: 'users',
+            attributes: ['name', 'username', 'id']
+        }
+    })
+
+    return res.status(200).json(updatedGroup?.users || [])
+})
+
 groupRouter.get('/:id/messages', auth, userExtractor, async (req, res) => {
     const group = await Group.findByPk(req.params.id, { attributes: ['id'] })
 
