@@ -25,6 +25,8 @@ app.use('/api/contacts', contactsRouter)
 app.use('/api/messages', messagesRouter)
 app.use('/api/requests', requestsRouter)
 
+app.use(middleware.errorHandler)
+
 app.get('/', (req, res) => {
     res.send('/')
 })
