@@ -63,6 +63,12 @@ groupRouter.post('/:id/members', auth, userExtractor, async (req, res) => {
         return res.status(400).end()
     }
 
+    const accessToGroup = await isGroupOwner(group.id, req.savedUser.id)
+
+    if(!accessToGroup) {
+        return res.status(403).json({ error: 'Only owner can add new members' })
+    }
+
     const isMember = await Membership.findOne({ where: {
         groupId: group.id,
         userId: user.id
