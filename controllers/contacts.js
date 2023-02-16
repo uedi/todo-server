@@ -47,4 +47,18 @@ contactRouter.post('/', auth, userExtractor, async (req, res) => {
     return res.status(201).json(contact)
 })
 
+contactRouter.delete('/:id', auth, userExtractor, async (req, res) => {
+    const contactId = req.params.id
+    console.log(contactId)
+
+    await Contact.destroy({
+        where: {
+            userId: req.savedUser.id,
+            contactId: contactId
+        }
+    })
+
+    return res.status(200).end()
+})
+
 module.exports = contactRouter
