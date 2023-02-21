@@ -38,11 +38,28 @@ contactRouter.post('/', auth, userExtractor, async (req, res) => {
         return res.status(400).json({ error: 'Unknown user' })
     }
 
-    const contact = await Contact.create({
+    const alreadyContact = await Contact.findOne({
+        where: {
+            userId: req.savedUser.id,
+            contactId: contactUser.id
+        }
+    })
+
+    if(alreadyContact) {
+        return res.status(400).json({ error: 'Already contact' })
+    }
+
+    const contactToSave = {
         userId: req.savedUser.id,
         contactId: contactUser.id,
         name: contactUser.name
-    })
+    }
+
+    if(body.color) {
+        contactToSave.color = body.color
+    }
+
+    const contact = await Contact.create(contactToSave)
 
     return res.status(201).json(contact)
 })
