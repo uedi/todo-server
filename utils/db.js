@@ -47,6 +47,11 @@ const connectToDatabase = async () => {
     return null
 }
 
+const closeDatabaseConnection = async () => {
+    await sequelize.close()
+}
+
 module.exports = {
-    connectToDatabase, sequelize, rollbackMigration, runMigrations
+    connectToDatabase, sequelize, rollbackMigration, runMigrations,
+    closeDatabaseConnection
 }

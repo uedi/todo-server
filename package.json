@@ -8,7 +8,8 @@
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "test:migrations": "cross-env NODE_ENV=test node utils/migrations.js",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
-    "migration:down": "node utils/rollback.js"
+    "migration:down": "node utils/rollback.js",
+    "demo:init": "node utils/demo.js"
   },
   "author": "",
   "license": "ISC",
