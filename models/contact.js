@@ -17,6 +17,11 @@ Contact.init({
     name: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    color: {
+        type: DataTypes.STRING,
+        defaultValue: '#ffffff',
+        length: 7
     }
 }, {
     sequelize,
