@@ -62,7 +62,6 @@ contactRouter.post('/', auth, userExtractor, async (req, res) => {
 
 contactRouter.delete('/:id', auth, userExtractor, async (req, res) => {
     const contactId = req.params.id
-    console.log(contactId)
 
     await Contact.destroy({
         where: {
@@ -72,6 +71,26 @@ contactRouter.delete('/:id', auth, userExtractor, async (req, res) => {
     })
 
     return res.status(200).end()
+})
+
+contactRouter.put('/:id', auth, userExtractor, async (req, res) => {
+    const body = req.body
+    const contactId = req.params.id
+    const contact = await getContact(contactId, req.savedUser.id)
+
+    if(!contact) {
+        return res.status(404).end()
+    }
+
+    if(body.color) {
+        contact.color = body.color
+    } else {
+        console.log('update contact, nothing to new save')
+    }
+
+    const updatedContact = await contact.save()
+
+    return res.status(200).json(updatedContact)
 })
 
 module.exports = contactRouter
