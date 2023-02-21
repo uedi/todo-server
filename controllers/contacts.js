@@ -2,6 +2,7 @@ const contactRouter = require('express').Router()
 const auth = require('../utils/auth')
 const { Contact, User } = require('../models')
 const { userExtractor } = require('../utils/middleware')
+const { getContact } = require('./helpers')
 
 contactRouter.get('/', auth, userExtractor, async (req, res) => {
     const contacts = await Contact.findAll({
@@ -38,12 +39,7 @@ contactRouter.post('/', auth, userExtractor, async (req, res) => {
         return res.status(400).json({ error: 'Unknown user' })
     }
 
-    const alreadyContact = await Contact.findOne({
-        where: {
-            userId: req.savedUser.id,
-            contactId: contactUser.id
-        }
-    })
+    const alreadyContact = await getContact(contactUser.id, req.savedUser.id)
 
     if(alreadyContact) {
         return res.status(400).json({ error: 'Already contact' })

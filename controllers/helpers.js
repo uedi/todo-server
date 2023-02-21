@@ -1,4 +1,4 @@
-const { Membership, List, Group, Todo, User } = require('../models')
+const { Membership, List, Group, Todo, User, Contact } = require('../models')
 
 const isGroupMember = async (groupId, userId) => {
     if(!groupId || !userId) {
@@ -39,6 +39,21 @@ const hasListAccess = async (listId, userId) => {
     return accessToList ? true : false
 }
 
+const getContact = async (contactId, userId) => {
+    if(!contactId || !userId) {
+        return null
+    }
+
+    const contact = await Contact.findOne({
+        where: {
+            userId: userId,
+            contactId: contactId
+        }
+    })
+
+    return contact
+}
+
 const getGroupResponse = async (groupId, userId) => {
     const savedGroup = await Group.findByPk(groupId, {
         include: [{
@@ -62,5 +77,5 @@ const getGroupResponse = async (groupId, userId) => {
 }
 
 module.exports = {
-    isGroupMember, hasListAccess, isGroupOwner, getGroupResponse
+    isGroupMember, hasListAccess, isGroupOwner, getGroupResponse, getContact
 }
