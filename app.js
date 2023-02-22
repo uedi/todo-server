@@ -10,6 +10,7 @@ const todoRouter = require('./controllers/todos')
 const contactsRouter = require('./controllers/contacts')
 const messagesRouter = require('./controllers/messages')
 const requestsRouter = require('./controllers/requests')
+const accountRouter = require('./controllers/account')
 
 app.use(express.json())
 
@@ -24,6 +25,7 @@ app.use('/api/todos', todoRouter)
 app.use('/api/contacts', contactsRouter)
 app.use('/api/messages', messagesRouter)
 app.use('/api/requests', requestsRouter)
+app.use('/api/account', accountRouter)
 
 app.use(middleware.errorHandler)
 
