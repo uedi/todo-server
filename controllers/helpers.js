@@ -1,4 +1,5 @@
 const { Membership, List, Group, Todo, User, Contact } = require('../models')
+const jwt = require('jsonwebtoken')
 
 const isGroupMember = async (groupId, userId) => {
     if(!groupId || !userId) {
@@ -76,6 +77,18 @@ const getGroupResponse = async (groupId, userId) => {
     return groupToSend
 }
 
+const userWithTokenResponse = (user) => {
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.TOKEN_DATA)
+    return ({
+        token,
+        user: {
+            id: user.id,
+            username: user.username,
+            name: user.name
+        }
+    })
+}
+
 module.exports = {
-    isGroupMember, hasListAccess, isGroupOwner, getGroupResponse, getContact
+    isGroupMember, hasListAccess, isGroupOwner, getGroupResponse, getContact, userWithTokenResponse
 }
