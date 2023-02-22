@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
 const loginRouter = require('express').Router()
-
+const { userWithTokenResponse } = require('./helpers')
 const { User } = require('../models')
 
 loginRouter.post('/', async (req, res) => {
@@ -25,16 +24,9 @@ loginRouter.post('/', async (req, res) => {
         return res.status(401).json({ error: 'Invalid credentials' })
     }
 
-    const token = jwt.sign({ id: user.id, username: user.username }, process.env.TOKEN_DATA)
+    const userWithToken = userWithTokenResponse(user)
 
-    return res.status(200).json({
-        token,
-        user: {
-            id: user.id,
-            username: user.username,
-            name: user.name
-        }
-    })
+    return res.status(200).json(userWithToken)
 })
 
 module.exports = loginRouter
