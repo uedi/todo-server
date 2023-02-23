@@ -21,11 +21,25 @@ const createUser = async (data) => {
     return { id: user.id, username: user.username, name: user.name }
 }
 
+const createListTodo = async (data, listId) => {
+    await Todo.create({ ...data, listId: listId })
+}
+
+const createGroupTodo = async (data, groupId) => {
+    await Todo.create({ ...data, groupId: groupId})
+}
+
 const createLists = async (user) => {
     const id = user.id
     const normalList = await List.create({ name: 'My List', userId: id })
     const pinkList = await List.create({ name: 'My Pink List', userId: id, color: '#f8bbd0' })
     const myBlueList = await List.create({ name: 'My Blue List', userId: id, color: '#bbdefb'})
+    await createListTodo({name: 'Urgent Todo', start: new Date(),end: new Date()}, pinkList.id)
+    await createListTodo({name: 'Something'}, normalList.id)
+    await createListTodo({name: 'Something', done: true }, pinkList.id)
+    await createListTodo({name: 'Something'}, myBlueList.id)
+    await createListTodo({name: 'Something else', start: new Date(), end: new Date('2023-12-31')}, normalList.id)
+    await createListTodo({name: 'Something else', start: new Date(), end: new Date('2023-12-31')}, pinkList.id)
 }
 
 const createGroups = async (user, members = []) => {
@@ -41,6 +55,10 @@ const createGroups = async (user, members = []) => {
         await Membership.create({ groupId: group1.id, userId: m.id, pending: false })
         await Membership.create({ groupId: group2.id, userId: m.id, pending: false })
     }
+
+    await createGroupTodo({name: 'Urgent Todo', start: new Date(),end: new Date()}, group1.id)
+    await createGroupTodo({name: 'Group party'}, group1.id)
+    await createGroupTodo({name: 'Group party'}, group2.id)
 }
 
 const addContacts = async (user, contacts = []) => {
