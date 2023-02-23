@@ -42,4 +42,24 @@ messageRouter.post('/', auth, userExtractor, async (req, res) => {
     return res.status(201).json(createdMessage)
 })
 
+messageRouter.delete('/:id', auth, userExtractor, async (req, res) => {
+    const id = req.params?.id
+
+    if(!id) {
+        return res.status(400).end()
+    }
+
+    const message = await Message.findByPk(id)
+
+    if(!message) {
+        return res.status(404).end()
+    } else if(message.userId !== req.savedUser.id) {
+        return res.status(403).end()
+    }
+
+    await message.destroy()
+
+    return res.status(200).end()
+})
+
 module.exports = messageRouter
