@@ -11,8 +11,13 @@ const contactsRouter = require('./controllers/contacts')
 const messagesRouter = require('./controllers/messages')
 const requestsRouter = require('./controllers/requests')
 const accountRouter = require('./controllers/account')
+const path = require('path')
 
 app.use(express.json())
+
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, 'build')))
+}
 
 app.use('/api/signup', signupRouter)
 app.use('/api/login', loginRouter)
@@ -29,8 +34,15 @@ app.use('/api/account', accountRouter)
 
 app.use(middleware.errorHandler)
 
-app.get('/', (req, res) => {
-    res.send('/')
-})
+if(process.env.NODE_ENV === 'production') {
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'build', 'index.html'))
+    })
+} else {
+    app.get('/', (req, res) => {
+        res.send('/')
+    })
+}
+
 
 module.exports = app
